@@ -1,0 +1,823 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "98623f5b3b65df2fa93ea16dc863a584",
+    "packages": [
+        {
+            "name": "composer/semver",
+            "version": "3.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/semver.git",
+                "reference": "d92543b7ede9c4ec6b59853cefb061e39866d2cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/semver/zipball/d92543b7ede9c4ec6b59853cefb061e39866d2cf",
+                "reference": "d92543b7ede9c4ec6b59853cefb061e39866d2cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.2 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.11",
+                "symfony/phpunit-bridge": "^3 || ^7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Semver\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nils Adermann",
+                    "email": "naderman@naderman.de",
+                    "homepage": "http://www.naderman.de"
+                },
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                },
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com",
+                    "homepage": "http://robbast.nl"
+                }
+            ],
+            "description": "Version comparison library that offers utilities, version constraint parsing and validation.",
+            "keywords": [
+                "semantic",
+                "semver",
+                "validation",
+                "versioning"
+            ],
+            "support": {
+                "irc": "ircs://irc.libera.chat:6697/composer",
+                "issues": "https://github.com/composer/semver/issues",
+                "source": "https://github.com/composer/semver/tree/3.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-10-29T09:13:34+00:00",
+            "published-time": "2026-10-29T09:14:11+00:00"
+        },
+        {
+            "name": "ezyang/htmlpurifier",
+            "version": "v4.19.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezyang/htmlpurifier.git",
+                "reference": "5e0539132d934f936fbae2c88b55d58f9438623f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/5e0539132d934f936fbae2c88b55d58f9438623f",
+                "reference": "5e0539132d934f936fbae2c88b55d58f9438623f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~5.6.0 || ~7.0.0 || ~7.1.0 || ~7.2.0 || ~7.3.0 || ~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "require-dev": {
+                "cerdic/css-tidy": "^1.7 || ^2.0",
+                "simpletest/simpletest": "dev-master"
+            },
+            "suggest": {
+                "cerdic/css-tidy": "If you want to use the filter 'Filter.ExtractStyleBlocks'.",
+                "ext-bcmath": "Used for unit conversion and imagecrash protection",
+                "ext-iconv": "Converts text to and from non-UTF-8 encodings",
+                "ext-tidy": "Used for pretty-printing HTML"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "library/HTMLPurifier.composer.php"
+                ],
+                "psr-0": {
+                    "HTMLPurifier": "library/"
+                },
+                "exclude-from-classmap": [
+                    "/library/HTMLPurifier/Language/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Edward Z. Yang",
+                    "email": "admin@htmlpurifier.org",
+                    "homepage": "http://ezyang.com"
+                }
+            ],
+            "description": "Standards compliant HTML filter written in PHP",
+            "homepage": "http://htmlpurifier.org/",
+            "keywords": [
+                "html"
+            ],
+            "support": {
+                "issues": "https://github.com/ezyang/htmlpurifier/issues",
+                "source": "https://github.com/ezyang/htmlpurifier/tree/v4.19.1"
+            },
+            "time": "2026-09-15T15:42:51+00:00",
+            "published-time": "2026-09-15T15:42:56+00:00"
+        },
+        {
+            "name": "kuria/cache",
+            "version": "v6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/cache.git",
+                "reference": "d0f495a31aebe2a5becf82c23c9e1c51bc7d5955"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/cache/zipball/d0f495a31aebe2a5becf82c23c9e1c51bc7d5955",
+                "reference": "d0f495a31aebe2a5becf82c23c9e1c51bc7d5955",
+                "shasum": ""
+            },
+            "require": {
+                "kuria/clock": "^1.0",
+                "kuria/event": "^2.0",
+                "kuria/iterable": "^1.0",
+                "php": ">=7.1.0"
+            },
+            "provide": {
+                "psr/cache-implementation": "1.0",
+                "psr/simple-cache-implementation": "1.0"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.6",
+                "php-mock/php-mock-phpunit": "^2.1.1",
+                "psr/cache": "^1.0",
+                "psr/simple-cache": "^1.0"
+            },
+            "suggest": {
+                "psr/cache": "to use the PSR-6 cache component (^1.0)",
+                "psr/simple-cache": "to use the PSR-16 simple cache component (^1.0)"
+            },
+            "type": "library",
+            "extra": {
+                "package-scripts-vars": {
+                    "kuria/dev-meta": {
+                        "tests.paths": [
+                            "tests/unit",
+                            "tests/integration",
+                            "tests/helpers"
+                        ],
+                        "phpcs.options": [
+                            "--ignore=/tests/helpers/Mocks/"
+                        ],
+                        "src.phpstan.config": "phpstan-src.neon",
+                        "tests.phpstan.config": "phpstan-tests.neon"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Cache\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Caching library with driver abstraction",
+            "keywords": [
+                "apcu",
+                "cache",
+                "file",
+                "filesystem",
+                "memcached",
+                "psr",
+                "psr-16",
+                "psr-6",
+                "redis",
+                "simple cache"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/cache/issues",
+                "source": "https://github.com/kuria/cache/tree/v6.0.0"
+            },
+            "time": "2022-02-05T13:10:27+00:00",
+            "published-time": "2022-02-05T13:11:16+00:00"
+        },
+        {
+            "name": "kuria/clock",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/clock.git",
+                "reference": "ed18a3d95db34ef9e514cbe7c42867fd9c587907"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/clock/zipball/ed18a3d95db34ef9e514cbe7c42867fd9c587907",
+                "reference": "ed18a3d95db34ef9e514cbe7c42867fd9c587907",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Clock\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Provides access to current date and time that can be mocked for testing purposes",
+            "keywords": [
+                "clock",
+                "date",
+                "datetime",
+                "now",
+                "override",
+                "test",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/clock/issues",
+                "source": "https://github.com/kuria/clock/tree/master"
+            },
+            "time": "2018-09-16T21:53:59+00:00",
+            "published-time": "2018-09-17T09:00:22+00:00"
+        },
+        {
+            "name": "kuria/debug",
+            "version": "v4.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/debug.git",
+                "reference": "142c48cc9ed1781730d5a1c64b7c56f942477eb2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/debug/zipball/142c48cc9ed1781730d5a1c64b7c56f942477eb2",
+                "reference": "142c48cc9ed1781730d5a1c64b7c56f942477eb2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Debug\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Collection of useful debugging utilities",
+            "keywords": [
+                "debug",
+                "dump",
+                "error",
+                "exception",
+                "hex",
+                "var_dump"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/debug/issues",
+                "source": "https://github.com/kuria/debug/tree/v4.0.3"
+            },
+            "time": "2026-09-25T14:16:50+00:00",
+            "published-time": "2026-09-25T14:18:22+00:00"
+        },
+        {
+            "name": "kuria/error",
+            "version": "v4.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/error.git",
+                "reference": "2e8a715791b788e4465cf57b9c7954910fd2324d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/error/zipball/2e8a715791b788e4465cf57b9c7954910fd2324d",
+                "reference": "2e8a715791b788e4465cf57b9c7954910fd2324d",
+                "shasum": ""
+            },
+            "require": {
+                "kuria/debug": "^4.0",
+                "kuria/event": "^2.0",
+                "kuria/php-highlighter": "^2.0 || ^3.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "ext-mbstring": "*",
+                "kuria/dev-meta": "^0.6"
+            },
+            "type": "library",
+            "extra": {
+                "package-scripts-vars": {
+                    "kuria/dev-meta": {
+                        "phpcs.standard": "./phpcs.xml"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Error\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Makes handling and debugging PHP errors suck less",
+            "keywords": [
+                "debug",
+                "debugger",
+                "error",
+                "error handler",
+                "exception",
+                "exception handler",
+                "fatal",
+                "stack",
+                "trace"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/error/issues",
+                "source": "https://github.com/kuria/error/tree/v4.2.4"
+            },
+            "time": "2025-04-26T11:13:12+00:00",
+            "published-time": "2025-04-26T11:13:30+00:00"
+        },
+        {
+            "name": "kuria/event",
+            "version": "v2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/event.git",
+                "reference": "d4f96b50a43f3fb5256b0211ec964b503e7c8daa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/event/zipball/d4f96b50a43f3fb5256b0211ec964b503e7c8daa",
+                "reference": "d4f96b50a43f3fb5256b0211ec964b503e7c8daa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Event\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Event library that implements variations of the mediator and observer patterns",
+            "keywords": [
+                "dispatcher",
+                "emitter",
+                "event",
+                "listener",
+                "mediator",
+                "observable",
+                "observer",
+                "subscriber"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/event/issues",
+                "source": "https://github.com/kuria/event/tree/v2.0.1"
+            },
+            "time": "2018-03-13T21:47:05+00:00",
+            "published-time": "2018-03-13T18:38:16+00:00"
+        },
+        {
+            "name": "kuria/iterable",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/iterable.git",
+                "reference": "47822ce22faae95c8bb28dacf8bb7a1b6e76eb6b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/iterable/zipball/47822ce22faae95c8bb28dacf8bb7a1b6e76eb6b",
+                "reference": "47822ce22faae95c8bb28dacf8bb7a1b6e76eb6b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Iterable\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Utilities for dealing with PHP's iterators and the iterable type",
+            "keywords": [
+                "array",
+                "caching",
+                "convert",
+                "iterable",
+                "iterator"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/iterable/issues",
+                "source": "https://github.com/kuria/iterable/tree/v1.0.1"
+            },
+            "time": "2022-02-05T13:52:02+00:00",
+            "published-time": "2022-02-05T13:52:19+00:00"
+        },
+        {
+            "name": "kuria/options",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/options.git",
+                "reference": "309dbce6d5a7202316d9ed3eb3739a2e1415915e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/options/zipball/309dbce6d5a7202316d9ed3eb3739a2e1415915e",
+                "reference": "309dbce6d5a7202316d9ed3eb3739a2e1415915e",
+                "shasum": ""
+            },
+            "require": {
+                "kuria/debug": "^4.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Options\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Resolve structured arrays according to the specified set of options",
+            "keywords": [
+                "configuration",
+                "deep",
+                "defaults",
+                "nested",
+                "normalizer",
+                "options",
+                "recursive",
+                "resolver",
+                "validator"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/options/issues",
+                "source": "https://github.com/kuria/options/tree/v2.1.0"
+            },
+            "time": "2023-02-14T21:46:10+00:00",
+            "published-time": "2023-02-14T21:47:18+00:00"
+        },
+        {
+            "name": "kuria/php-highlighter",
+            "version": "v3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/php-highlighter.git",
+                "reference": "67ba4b553c9d0f80900b20e89e67077d1efa39cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/php-highlighter/zipball/67ba4b553c9d0f80900b20e89e67077d1efa39cb",
+                "reference": "67ba4b553c9d0f80900b20e89e67077d1efa39cb",
+                "shasum": ""
+            },
+            "require": {
+                "kuria/simple-html-parser": "^2.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\PhpHighlighter\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP code highlighter",
+            "keywords": [
+                "highlight_file",
+                "highlight_string",
+                "highlighter",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/php-highlighter/issues",
+                "source": "https://github.com/kuria/php-highlighter/tree/v3.0.3"
+            },
+            "time": "2025-01-05T12:16:30+00:00",
+            "published-time": "2025-01-05T12:16:59+00:00"
+        },
+        {
+            "name": "kuria/request-info",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/request-info.git",
+                "reference": "7be84945dbe81680b28a69ad44b93b2409c3105d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/request-info/zipball/7be84945dbe81680b28a69ad44b93b2409c3105d",
+                "reference": "7be84945dbe81680b28a69ad44b93b2409c3105d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-filter": "*",
+                "kuria/url": "^5.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.6",
+                "php-mock/php-mock-phpunit": "^2.1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\RequestInfo\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Get information about the current HTTP request",
+            "keywords": [
+                "IP",
+                "base-dir",
+                "base-path",
+                "forwarded",
+                "headers",
+                "host",
+                "http",
+                "https",
+                "method",
+                "path-info",
+                "port",
+                "request",
+                "rfc-7239",
+                "scheme",
+                "trusted-proxy",
+                "url",
+                "x-forwarded"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/request-info/issues",
+                "source": "https://github.com/kuria/request-info/tree/v1.0.3"
+            },
+            "time": "2025-04-07T17:21:31+00:00",
+            "published-time": "2025-04-07T17:22:39+00:00"
+        },
+        {
+            "name": "kuria/simple-html-parser",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/simple-html-parser.git",
+                "reference": "e5993168013ab143c269ff6ac57c3f4adf2d281d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/simple-html-parser/zipball/e5993168013ab143c269ff6ac57c3f4adf2d281d",
+                "reference": "e5993168013ab143c269ff6ac57c3f4adf2d281d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\SimpleHtmlParser\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Minimalistic HTML parser",
+            "keywords": [
+                "DTD",
+                "charset",
+                "comment",
+                "encoding",
+                "html",
+                "parser",
+                "tag"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/simple-html-parser/issues",
+                "source": "https://github.com/kuria/simple-html-parser/tree/master"
+            },
+            "time": "2018-03-13T21:43:27+00:00",
+            "published-time": "2018-03-13T18:39:37+00:00"
+        },
+        {
+            "name": "kuria/url",
+            "version": "v5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kuria/url.git",
+                "reference": "5f405abb9bd4b722a907363b3d7c43207365c411"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kuria/url/zipball/5f405abb9bd4b722a907363b3d7c43207365c411",
+                "reference": "5f405abb9bd4b722a907363b3d7c43207365c411",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "kuria/dev-meta": "^0.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kuria\\Url\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Parsing, modifying and building URLs",
+            "keywords": [
+                "build",
+                "parameter",
+                "parse",
+                "parse_str",
+                "parse_url",
+                "query-string",
+                "url",
+                "url-builder",
+                "url-building",
+                "url-parser",
+                "url-parsing"
+            ],
+            "support": {
+                "issues": "https://github.com/kuria/url/issues",
+                "source": "https://github.com/kuria/url/tree/v5.0.0"
+            },
+            "time": "2019-02-03T16:02:45+00:00",
+            "published-time": "2022-02-19T16:43:20+00:00"
+        },
+        {
+            "name": "xemlock/htmlpurifier-html5",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/xemlock/htmlpurifier-html5.git",
+                "reference": "a564d2ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/xemlock/htmlpurifier-html5/zipball/a564d2ab",
+                "reference": "a564d2ab",
+                "shasum": ""
+            },
+            "require": {
+                "ezyang/htmlpurifier": "^4.8",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "masterminds/html5": "^2.7",
+                "php-coveralls/php-coveralls": "^1.1|^2.1",
+                "phpunit/phpunit": ">=4.7 <10.0"
+            },
+            "suggest": {
+                "masterminds/html5": "Required to use HTMLPurifier_Lexer_HTML5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "library/HTMLPurifier/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "xemlock",
+                    "email": "xemlock@gmail.com"
+                }
+            ],
+            "description": "HTML5 support for HTML Purifier",
+            "homepage": "https://github.com/xemlock/htmlpurifier-html5",
+            "keywords": [
+                "HTML5",
+                "Purifier",
+                "html",
+                "htmlpurifier",
+                "security",
+                "tidy",
+                "validator",
+                "xss"
+            ],
+            "support": {
+                "issues": "https://github.com/xemlock/htmlpurifier-html5/issues",
+                "source": "https://github.com/xemlock/htmlpurifier-html5/tree/master"
+            },
+            "time": "2026-06-18T20:10:30+00:00",
+            "published-time": "2026-06-18T20:10:34+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [
+        {
+            "package": "xemlock/htmlpurifier-html5",
+            "version": "9999999-dev",
+            "alias": "0.1.12",
+            "alias_normalized": "0.1.12.0"
+        }
+    ],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "xemlock/htmlpurifier-html5": 20
+    },
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^8.4",
+        "ext-ctype": "*",
+        "ext-gd": "*",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-mysqli": "*",
+        "ext-session": "*",
+        "ext-zip": "*"
+    },
+    "platform-dev": {},
+    "platform-overrides": {
+        "php": "8.4.0"
+    },
+    "plugin-api-version": "2.11.0"
+}

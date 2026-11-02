@@ -35,6 +35,5 @@
 
 /vendor/
 /bin/
-/composer.lock
 /config.php
 /mail.log
