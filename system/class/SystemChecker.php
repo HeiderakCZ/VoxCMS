@@ -39,6 +39,17 @@ class SystemChecker
     }
 
     /**
+     * Validate only the installer lock without running other checks or hooks.
+     */
+    function checkInstallLock(): bool
+    {
+        $this->errors = [];
+        $this->checkInstallFiles();
+
+        return empty($this->errors);
+    }
+
+    /**
      * See if there were any errors
      */
     function hasErrors(): bool
@@ -87,11 +98,16 @@ class SystemChecker
      */
     private function checkInstallFiles(): void
     {
-        if (is_dir(SL_ROOT . 'install') && !Core::$debug) {
-            $this->errors[] = [
-                'Adresář install se stále nachází na serveru - po instalaci je třeba jej odstranit',
-                'The install directory still exists - it must be removed after installation',
-            ];
+        if (is_dir(SL_ROOT . 'install')) {
+            $config = @include SL_ROOT . 'config.php';
+            $secret = is_array($config) ? ($config['secret'] ?? '') : '';
+
+            if (!is_string($secret) || !InstallationLock::isInstalled($secret)) {
+                $this->errors[] = [
+                    'Adresář install je přítomen, ale chybí platný instalační zámek',
+                    'The install directory is present but its installation lock is missing or invalid',
+                ];
+            }
         }
     }
 }

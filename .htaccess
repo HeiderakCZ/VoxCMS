@@ -11,6 +11,10 @@ DirectoryIndex index.php
     RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
     RewriteRule .* - [E=BASE:%1]
 
+    # lock every installer URL after successful installation
+    RewriteCond %{DOCUMENT_ROOT}%{ENV:BASE}/.voxcms-installed -f
+    RewriteRule ^install(?:/|$) - [F,L,NC]
+
     # direct requests to index.php unless it's a file or a dir
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

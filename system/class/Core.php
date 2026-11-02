@@ -442,6 +442,14 @@ abstract class Core
         // installation check
         if ($options['config_file'] !== false) {
             $installCheckKey = sprintf('%s-%d', self::VERSION, filemtime($options['config_file']));
+            $installDirectoryExists = is_dir(SL_ROOT . 'install');
+            $installLockInvalid = false;
+
+            if ($installDirectoryExists) {
+                $lockChecker = new SystemChecker();
+                $lockChecker->checkInstallLock();
+                $installLockInvalid = $lockChecker->hasErrors();
+            }
 
             if (Settings::get('install_check') !== $installCheckKey) {
                 $systemChecker = new SystemChecker();
@@ -457,6 +465,15 @@ abstract class Core
                 }
 
                 Settings::update('install_check', $installCheckKey, false);
+            }
+
+            if ($installLockInvalid) {
+                self::fail(
+                    'Při kontrole instalace byly detekovány následující problémy:',
+                    'The installation check has detected the following problems:',
+                    null,
+                    $lockChecker->renderErrors()
+                );
             }
         }
     }

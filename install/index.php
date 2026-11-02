@@ -10,6 +10,7 @@ use Sunlight\Database\DatabaseException;
 use Sunlight\Database\DatabaseLoader;
 use Sunlight\Database\SqlReader;
 use Sunlight\Email;
+use Sunlight\InstallationLock;
 use Sunlight\User;
 use Sunlight\Util\ConfigurationFile;
 use Sunlight\Util\Form;
@@ -36,6 +37,15 @@ foreach ($defaults as $key => $value) {
     if (!$config->isDefined($key)) {
         $config[$key] = $value;
     }
+}
+
+if (!InstallationLock::canRunInstaller(
+    (string) $config['secret'],
+    is_file(CONFIG_PATH),
+    $_SERVER['REMOTE_ADDR'] ?? null
+)) {
+    http_response_code(403);
+    exit('The installer is unavailable.');
 }
 
 /**
@@ -126,7 +136,7 @@ abstract class Labels
             'complete.title' => 'Hotovo',
             'complete.whats_next' => 'Co dál?',
             'complete.success' => 'Instalace byla úspěšně dokončena!',
-            'complete.installdir_warning' => 'Než budete pokračovat, je potřeba odstranit adresář install ze serveru.',
+            'complete.installdir_warning' => 'Instalátor je uzamčen. Produkční nasazení má adresář install vynechat z veřejného DocumentRoot.',
             'complete.goto.web' => 'zobrazit stránky',
             'complete.goto.admin' => 'přihlásit se do administrace',
         ],
@@ -202,7 +212,7 @@ abstract class Labels
             'complete.title' => 'Complete',
             'complete.whats_next' => 'What\'s next?',
             'complete.success' => 'Installation has been completed successfully!',
-            'complete.installdir_warning' => 'Before you continue, you must remove the install directory.',
+            'complete.installdir_warning' => 'The installer is locked. Production deployments should omit the install directory from the public DocumentRoot.',
             'complete.goto.web' => 'open the website',
             'complete.goto.admin' => 'log into administration',
         ],
@@ -564,6 +574,8 @@ class ConfigurationStep extends Step
 
     protected function doSubmit(): void
     {
+        $previousSecret = (string) $this->config['secret'];
+
         // load data
         $config = [
             'db.server' => trim(Request::post('config_db_server', '')),
@@ -637,6 +649,7 @@ class ConfigurationStep extends Step
 
             try {
                 $this->config->save();
+                InstallationLock::begin((string) $this->config['secret'], $previousSecret);
             } catch (\Throwable $e) {
                 $this->errors[] = ['write_failed', ['%config_path%' => CONFIG_PATH]];
             }
@@ -747,26 +760,10 @@ class ConfigurationStep extends Step
  */
 class ImportDatabaseStep extends Step
 {
-    /** @var string[] */
-    private static $baseTableNames = [
-        'article',
-        'box',
-        'gallery_image',
-        'iplog',
-        'log',
-        'page',
-        'pm',
-        'poll',
-        'post',
-        'redirect',
-        'setting',
-        'shoutbox',
-        'user',
-        'user_activation',
-        'user_group',
-    ];
     /** @var array|null */
     private $existingTableNames;
+    /** @var bool */
+    private $importSucceeded = false;
 
     function getMainLabelKey(): string
     {
@@ -863,6 +860,8 @@ class ImportDatabaseStep extends Step
                     }
                 }
             });
+
+            $this->importSucceeded = true;
         }
     }
 
@@ -923,9 +922,21 @@ Now you can log into the administration (with the account set up during installa
 
     function isComplete(): bool
     {
-        return
-            parent::isComplete()
-            && $this->isDatabaseInstalled();
+        return $this->submitted
+            && empty($this->errors)
+            && $this->importSucceeded
+            && InstallationLock::inspectDatabase()['status'] === 'complete';
+    }
+
+    function postComplete(): void
+    {
+        $validation = InstallationLock::inspectDatabase();
+
+        if ($validation['status'] !== 'complete') {
+            throw new \RuntimeException($validation['message']);
+        }
+
+        InstallationLock::complete((string) $this->config['secret']);
     }
 
     function run(): void
@@ -988,11 +999,6 @@ Now you can log into the administration (with the account set up during installa
 <?php
     }
 
-    private function isDatabaseInstalled(): bool
-    {
-        return count(array_diff($this->getTableNames(), $this->getExistingTableNames())) === 0;
-    }
-
     private function isDatabaseSupported(string $version): bool
     {
         if (preg_match('{(\d+\.\d+\.\d+)(-[^-]+|$)}A', $version, $match)) {
@@ -1026,17 +1032,6 @@ Now you can log into the administration (with the account set up during installa
         return $this->existingTableNames;
     }
 
-    /**
-     * @return string[]
-     */
-    private function getTableNames(): array
-    {
-        $prefix = $this->config['db.prefix'] . '_';
-
-        return array_map(function ($baseTableName) use ($prefix) {
-            return $prefix . $baseTableName;
-        }, self::$baseTableNames);
-    }
 }
 
 /**

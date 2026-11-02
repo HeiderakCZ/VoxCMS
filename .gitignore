@@ -36,4 +36,9 @@
 /vendor/
 /bin/
 /config.php
+/.voxcms-installed
+/.voxcms-installing
+/.voxcms-installed.invalid-*
+/.voxcms-installing.invalid-*
+/.voxcms-lock-*
 /mail.log
