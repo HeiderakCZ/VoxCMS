@@ -1,38 +1,65 @@
 <?php use Sunlight\Template; ?>
+<?php
+$themeConfig = $GLOBALS['sunlight_template_universal_config'] ?? [];
+$logoUrl = trim((string) ($themeConfig['logo_url'] ?? ''));
+$logoAlt = trim((string) ($themeConfig['logo_alt'] ?? ''));
+$headerText = trim((string) ($themeConfig['header_text'] ?? ''));
+if ($logoAlt === '') {
+    $logoAlt = Template::siteTitle();
+}
+?>
 
-<div id="wrapper">
-    <div id="header">
-        <div id="logo">
-            <a href="<?= Template::siteUrl() ?>"><?= Template::siteTitle() ?></a>
-            <p><?= Template::siteDescription() ?></p>
+<div class="site-shell">
+    <div class="utility-bar">
+        <div class="site-width utility-inner">
+            <?php if ($headerText !== ''): ?>
+                <span class="utility-tagline"><?= _e($headerText) ?></span>
+            <?php else: ?>
+                <span class="utility-tagline"></span>
+            <?php endif; ?>
+            <nav class="user-menu" aria-label="Uživatelské menu">
+                <?= Template::userMenu() ?>
+            </nav>
         </div>
-
-        <?= Template::userMenu() ?>
     </div>
 
-    <div id="menu">
-        <?= Template::menu() ?>
-    </div>
+    <header class="site-header">
+        <div class="site-width header-inner">
+            <a class="brand" href="<?= _e(Template::sitePath()) ?>" aria-label="<?= _e(Template::siteTitle()) ?> – úvodní stránka">
+                <?php if ($logoUrl !== ''): ?>
+                    <img class="brand-logo" src="<?= _e($logoUrl) ?>" alt="<?= _e($logoAlt) ?>">
+                <?php else: ?>
+                    <span class="brand-name"><?= _e(Template::siteTitle()) ?></span>
+                <?php endif; ?>
+            </a>
+            <nav class="main-navigation" aria-label="Hlavní navigace">
+                <?= Template::menu() ?>
+            </nav>
+        </div>
+    </header>
 
-    <div id="page">
-        <div id="content"<?php if (Template::hasBoxes('right')): ?> class="with-sidebar"<?php endif ?>>
+    <main class="site-width page-layout">
+        <section class="main-content">
+            <div class="breadcrumbs"><?= Template::backlink() ?></div>
             <?= Template::heading() ?>
-            <?= Template::backlink() ?>
-            <?= Template::content() ?>
+            <div class="content-body">
+                <?= Template::content() ?>
+            </div>
+        </section>
 
-            <div class="cleaner"></div>
-        </div>
-
-        <?php if (Template::hasBoxes('right')): ?>
-        <div id="sidebar">
+        <aside class="sidebar" aria-label="Postranní panel">
             <?= Template::boxes('right') ?>
+        </aside>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-width footer-inner">
+            <span>&copy; <?= date('Y') ?> <?= Template::siteTitle() ?></span>
+            <ul class="footer-links"><?= Template::links() ?></ul>
+            <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Přepnout barevný režim">
+                <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+                <span class="theme-toggle-label">Tmavý režim</span>
+            </button>
         </div>
-        <div class="cleaner"></div>
-        <?php endif ?>
-    </div>
-</div>
-<div id="footer">
-    <ul>
-        <?= Template::links() ?>
-    </ul>
+    </footer>
 </div>

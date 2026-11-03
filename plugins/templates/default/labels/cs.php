@@ -2,5 +2,5 @@
 
 return [
     'default.label' => 'výchozí',
-    'default.slot.right' => 'pravý sloupec',
+    'default.slot.right' => 'pravý postranní panel',
 ];

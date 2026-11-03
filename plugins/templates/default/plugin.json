@@ -1,23 +1,46 @@
 {
-    "$schema": "../../../system/schema/template.json",
-    "name": "Default",
-    "description": "8.x default template.",
-    "authors": [
-        {"url": "https://sunlight-cms.cz/"},
-        {"name": "templated.co"}
-    ],
-    "version": "1.0",
-    "environment": {
-        "system": "^8.0"
+  "$schema": "../../../system/schema/template.json",
+  "name": "Univerzální responzivní motiv",
+  "description": "Univerzální responzivní motiv se světlým a tmavým režimem",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "url": "https://sunlight-cms.cz/"
     },
-    "layouts": {
-        "default": {
-            "template": "template.php",
-            "slots": ["right"]
-        }
+    {
+      "name": "templated.co"
     },
-    "box.parent": "ul",
-    "box.item": "li",
-    "box.title": "h2",
-    "box.title.inside": true
+    {
+      "name": "Heiderak - www.3dtiskari.cz"
+    }
+  ],
+  "environment": {
+    "system": "^8.3.1"
+  },
+  "responsive": true,
+  "js": [
+    "template.js"
+  ],
+  "layouts": {
+    "default": {
+      "template": "template.php",
+      "slots": [
+        "right"
+      ]
+    }
+  },
+  "config_defaults": {
+    "logo_url": "",
+    "logo_alt": "",
+    "header_text": ""
+  },
+  "events": [
+    {
+      "event": "tpl.start",
+      "script": "event/config.php"
+    }
+  ],
+  "box.item": "section",
+  "box.title": "h2",
+  "box.title.inside": true
 }
