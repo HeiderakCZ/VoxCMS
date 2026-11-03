@@ -9,6 +9,106 @@ Sunlight.admin = (function ($) {
     {
         initBusyOverlay();
         initHsFieldsets();
+        initSidebar();
+    }
+
+    /**
+     * Initialize the VoxCMS sidebar and account popover.
+     */
+    function initSidebar()
+    {
+        var shell = document.getElementById('container');
+        var sidebar = document.getElementById('admin-sidebar');
+        var toggle = document.getElementById('admin-sidebar-toggle');
+        var overlay = document.getElementById('admin-sidebar-overlay');
+        var accountMenu = document.getElementById('usermenu');
+
+        if (!shell || !sidebar || !toggle || !overlay) {
+            return;
+        }
+
+        var mobileQuery = window.matchMedia('(max-width: 999px)');
+        var storageKey = 'voxcms.admin.sidebar.collapsed';
+        var collapsed = false;
+
+        try {
+            collapsed = localStorage.getItem(storageKey) === '1';
+        } catch (error) {
+            // Storage may be unavailable in private or restricted browser contexts.
+        }
+
+        if (!mobileQuery.matches && collapsed) {
+            shell.classList.add('vox-sidebar-collapsed');
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+
+        function closeMobileSidebar(restoreFocus)
+        {
+            document.body.classList.remove('vox-sidebar-open');
+            if (mobileQuery.matches) {
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+            if (restoreFocus) {
+                toggle.focus();
+            }
+        }
+
+        toggle.addEventListener('click', function () {
+            if (mobileQuery.matches) {
+                var isOpen = document.body.classList.toggle('vox-sidebar-open');
+                toggle.setAttribute('aria-expanded', String(isOpen));
+            } else {
+                var isExpanded = shell.classList.toggle('vox-sidebar-collapsed') === false;
+                toggle.setAttribute('aria-expanded', String(isExpanded));
+                try {
+                    localStorage.setItem(storageKey, isExpanded ? '0' : '1');
+                } catch (error) {
+                    // The compact preference is optional; navigation remains usable without storage.
+                }
+            }
+        });
+
+        sidebar.addEventListener('click', function (event) {
+            if (mobileQuery.matches && event.target.closest('a')) {
+                closeMobileSidebar(false);
+            }
+        });
+
+        document.addEventListener('click', function (event) {
+            if (
+                mobileQuery.matches
+                && document.body.classList.contains('vox-sidebar-open')
+                && !sidebar.contains(event.target)
+                && !toggle.contains(event.target)
+            ) {
+                closeMobileSidebar(false);
+            }
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                if (document.body.classList.contains('vox-sidebar-open')) {
+                    closeMobileSidebar(true);
+                }
+                if (accountMenu && accountMenu.open) {
+                    accountMenu.open = false;
+                    accountMenu.querySelector('summary').focus();
+                }
+            }
+        });
+
+        if (accountMenu) {
+            document.addEventListener('click', function (event) {
+                if (accountMenu.open && !accountMenu.contains(event.target)) {
+                    accountMenu.open = false;
+                }
+            });
+        }
+
+        mobileQuery.addEventListener('change', function (event) {
+            document.body.classList.remove('vox-sidebar-open');
+            toggle.setAttribute('aria-expanded', String(!event.matches && !shell.classList.contains('vox-sidebar-collapsed')));
+        });
     }
 
     /**

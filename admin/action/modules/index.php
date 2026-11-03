@@ -7,6 +7,7 @@ use Sunlight\Extend;
 use Sunlight\Log\LogQuery;
 use Sunlight\Logger;
 use Sunlight\Message;
+use Sunlight\Page\Page;
 use Sunlight\Router;
 use Sunlight\Settings;
 use Sunlight\User;
@@ -56,66 +57,151 @@ if (!empty($maxltime) && !Cookie::exists(User::COOKIE_PERSISTENT_LOGIN)) {
     $logout_warning = Admin::note(_lang('admin.index.logoutwarn', ['%minutes%' => _num(round($maxltime / 60))]));
 }
 
+// Build dashboard data from existing CMS tables, respecting each user's module permissions.
+$dashboardStats = [];
+$statIcons = [
+    'articles' => '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
+    'pages' => '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
+    'users' => '<path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="7" r="3.5"/><path d="M17 11a3.5 3.5 0 0 0 0-7M17 14.5a4 4 0 0 1 4 4V20"/>',
+    'categories' => '<path d="M3 7h7l2 2h9v10H3z"/><path d="M3 7V5h7l2 2"/>',
+    'media' => '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/>',
+    'pending' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+];
+
+if (User::hasPrivilege('adminart')) {
+    $dashboardStats[] = [
+        'label' => _lang('admin.vox.dashboard.articles'),
+        'value' => DB::count('article', Admin::articleAccessSql()),
+        'url' => Router::admin('content-articles'),
+        'icon' => 'articles',
+    ];
+}
+
+if (User::hasPrivilege('adminusers')) {
+    $dashboardStats[] = [
+        'label' => _lang('admin.vox.dashboard.users'),
+        'value' => DB::count('user', "username!=''"),
+        'url' => Router::admin('users-list'),
+        'icon' => 'users',
+    ];
+}
+
+if (User::hasPrivilege('admincategory') && Admin::moduleAccess('content')) {
+    $dashboardStats[] = [
+        'label' => _lang('admin.vox.dashboard.categories'),
+        'value' => DB::count('page', 'type=' . Page::CATEGORY . ' AND level<=' . (int) User::getLevel()),
+        'url' => Router::admin('content'),
+        'icon' => 'categories',
+    ];
+}
+
+if (User::hasPrivilege('adminpages') && Admin::moduleAccess('content')) {
+    $dashboardStats[] = [
+        'label' => _lang('admin.vox.dashboard.pages'),
+        'value' => DB::count('page', 'type=' . Page::SECTION . ' AND level<=' . (int) User::getLevel()),
+        'url' => Router::admin('content'),
+        'icon' => 'pages',
+    ];
+}
+
+if (User::hasPrivilege('admingallery')) {
+    $dashboardStats[] = [
+        'label' => _lang('admin.vox.dashboard.gallery_images'),
+        'value' => DB::count('gallery_image'),
+        'url' => Router::admin('content'),
+        'icon' => 'media',
+    ];
+}
+
+if (User::hasPrivilege('adminconfirm')) {
+    $dashboardStats[] = [
+        'label' => _lang('admin.vox.dashboard.pending_articles'),
+        'value' => DB::count('article', 'confirmed=0 AND ' . Admin::articleAccessSql()),
+        'url' => Router::admin('content-confirm'),
+        'icon' => 'pending',
+    ];
+}
+
+$recentArticles = [];
+if (User::hasPrivilege('adminart')) {
+    $recentArticlesQuery = DB::query('SELECT id,title,time FROM ' . DB::table('article') . ' WHERE ' . Admin::articleAccessSql() . ' ORDER BY time DESC,id DESC LIMIT 5');
+    $recentArticles = DB::rows($recentArticlesQuery);
+}
+
 // output
-$output .= '
-<table id="index-table" class="table-collapse">
+$dashboardIntro = ($custom !== '' && $admin_index_cfg['admin_index_custom_pos'] == 0)
+    ? $custom
+    : '<h1>' . _lang('admin.menu.index') . '</h1><p>' . _lang('admin.vox.dashboard.welcome') . '</p>' . $logout_warning;
 
-<tr class="valign-top">
+$output .= '<div class="vox-dashboard">
+    <section class="vox-dashboard-welcome">' . $dashboardIntro . '</section>
+    <section class="vox-dashboard-grid" aria-label="' . _e(_lang('admin.vox.dashboard.stats')) . '">';
 
-<td>' . (($custom !== '' && $admin_index_cfg['admin_index_custom_pos'] == 0) ? $custom : '
-  <h1>' . _lang('admin.menu.index') . '</h1>
-  <p>' . _lang('admin.index.p') . '</p>
-  ' . $logout_warning . '
-  ') . '
-</td>
+foreach ($dashboardStats as $stat) {
+    $output .= '<a class="vox-stat-card" href="' . _e($stat['url']) . '">
+        <span class="vox-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24">' . $statIcons[$stat['icon']] . '</svg></span>
+        <span class="vox-stat-value">' . _num($stat['value']) . '</span>
+        <span class="vox-stat-label">' . _e($stat['label']) . '</span>
+    </a>';
+}
 
-<td>
-  <h2>' . _lang('admin.index.box') . '</h2>
-  <table>
-    <tr>
-      <th>' . _lang('global.version') . ':</th>
-      <td>' . _e(Core::VERSION) . '</td>
-    </tr>
+$output .= '</section>';
 
-    ' . _buffer(function () use ($version_data) { ?>
-        <tr>
-            <th><?= _lang('admin.index.box.latest') ?></th>
-            <td>
-                <?php if ($version_data === null): ?>
-                    ---
-                <?php else: ?>
-                    <a class="latest-version latest-version-age-<?= _e($version_data['localAge']) ?>" href="<?= _e($version_data['url']) ?>" target="_blank">
-                        <?= _e($version_data['latestVersion']) ?>
-                    </a>
-                <?php endif ?>
-            </td>
-        </tr>
-    <?php }) . '
+if ($custom !== '' && $admin_index_cfg['admin_index_custom_pos'] == 1) {
+    $output .= '<section class="vox-dashboard-custom">' . $custom . '</section>';
+}
 
-    <tr>
-      <th>PHP:</th>
-      <td>
-        ' . (User::isSuperAdmin() ? '<a href="' . _e(Router::path('admin/script/phpinfo.php')) . '" target="_blank">' : '') . '
-        ' . _e(Environment::getPhpVersion()) . '
-        ' . (User::isSuperAdmin() ? '</a>' :'') . '
-    </td>
-    </tr>
-    <tr>
-      <th>MySQL:</th>
-      <td>' . $mysqlver . '</td>
-    </tr>
-  </table>
-</td>
+$output .= '<div class="vox-dashboard-panels">
+    <section class="vox-dashboard-panel">
+        <h2>' . _lang('admin.vox.dashboard.recent_activity') . '</h2>';
 
-</tr>
+if (!empty($recentArticles)) {
+    $output .= '<ul class="vox-activity-list">';
+    foreach ($recentArticles as $article) {
+        $output .= '<li><span>' . _e($article['title']) . '</span><time class="vox-activity-meta" datetime="' . date('c', (int) $article['time']) . '">'
+            . GenericTemplates::renderDate((int) $article['time']) . '</time></li>';
+    }
+    $output .= '</ul>';
+} else {
+    $output .= '<p class="note">' . _lang('admin.vox.dashboard.no_recent_activity') . '</p>';
+}
 
-' . (($custom !== '' && $admin_index_cfg['admin_index_custom_pos'] == 1) ? '<tr><td colspan="2">' . $custom . '</td></tr>' : '') . '
-
-</table>
-';
-
-// extend
 $output .= Extend::buffer('admin.index.after_table');
+$output .= '</section>
+    <section class="vox-dashboard-panel">
+        <h2>' . _lang('admin.vox.dashboard.system') . '</h2>
+        <table class="vox-system-info"><tbody>
+            <tr><th>' . _lang('global.version') . '</th><td>' . _e(Core::VERSION) . '</td></tr>
+            <tr><th>PHP</th><td>'
+                . (User::isSuperAdmin() ? '<a href="' . _e(Router::path('admin/script/phpinfo.php')) . '" target="_blank">' : '')
+                . _e(Environment::getPhpVersion())
+                . (User::isSuperAdmin() ? '</a>' : '')
+                . '</td></tr>
+            <tr><th>MySQL</th><td>' . _e((string) $mysqlver) . '</td></tr>
+            <tr><th>' . _lang('admin.index.box.latest') . '</th><td>';
+
+if ($version_data === null) {
+    $output .= '—';
+} else {
+    $output .= '<a class="latest-version latest-version-age-' . _e($version_data['localAge']) . '" href="' . _e($version_data['url']) . '" target="_blank">'
+        . _e($version_data['latestVersion']) . '</a>';
+}
+
+$output .= '</td></tr>
+        </tbody></table>
+        <div class="vox-quick-links">';
+
+if (User::hasPrivilege('adminart')) {
+    $output .= '<a class="button" href="' . _e(Router::admin('content-articles-edit')) . '">' . _lang('admin.content.articles.create') . '</a>';
+}
+if (User::hasPrivilege('adminusers')) {
+    $output .= '<a class="button" href="' . _e(Router::admin('users-list')) . '">' . _lang('admin.users.list') . '</a>';
+}
+if (User::hasPrivilege('fileaccess')) {
+    $output .= '<a class="button" href="' . _e(Router::admin('fman')) . '">' . _lang('admin.menu.fman') . '</a>';
+}
+
+$output .= '</div></section></div>';
 
 // messages
 $messages = [];

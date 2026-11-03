@@ -86,51 +86,71 @@ echo _buffer(function () use ($_admin) {
 <?= Extend::buffer('admin.body.start', ['replace' => &$replaceBody]) ?>
 
 <?php if (!$replaceBody): ?>
-<div id="container">
+<div id="container" class="vox-admin-shell">
+    <header id="top" class="vox-topbar">
+        <div id="header" class="vox-topbar-inner">
+            <?php if ($_admin->access): ?>
+                <button id="admin-sidebar-toggle" class="vox-icon-button" type="button" aria-controls="admin-sidebar" aria-expanded="true" aria-label="<?= _e(_lang('admin.vox.nav.toggle')) ?>" title="<?= _e(_lang('admin.vox.nav.toggle')) ?>">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            <?php endif ?>
+            <a class="vox-brand" href="<?= _e(Router::adminIndex()) ?>" aria-label="VoxCMS — <?= _e(_lang('admin.menu.index')) ?>">
+                <span class="vox-brand-mark" aria-hidden="true">V</span>
+                <span>VoxCMS</span>
+            </a>
 
-    <header id="top">
-        <div class="wrapper">
-            <div id="header">
-                <?= Admin::userMenu($_admin->dark) ?>
-                <div id="title">
-                    <label id="menu-toggle-button" for="menu-toggle" aria-label="<?= _lang('admin.open_menu') ?>">☰</label>
-                    <?= Settings::get('title'), ' - ', _lang('global.admintitle') ?>
+            <?php if ($_admin->access): ?>
+                <div class="vox-topbar-actions">
+                    <?= Admin::userMenu($_admin->dark) ?>
                 </div>
-            </div>
-
-            <hr class="hidden">
-            <input type="checkbox" class="hidden" id="menu-toggle">
-            <?= Admin::menu() ?>
+            <?php else: ?>
+                <?= Admin::userMenu($_admin->dark) ?>
+            <?php endif ?>
         </div>
     </header>
 
-    <main id="page" class="wrapper">
-        <div id="content"<?php if (!empty($_admin->contentClasses)): ?> class="<?= _e(implode(' ', $_admin->contentClasses)) ?>"<?php endif ?>>
-            <?= $_admin->output ?>
+    <?php if ($_admin->access): ?>
+        <div class="vox-admin-layout">
+            <aside id="admin-sidebar" class="vox-sidebar">
+                <?= Admin::menu() ?>
+            </aside>
+            <button id="admin-sidebar-overlay" class="vox-sidebar-overlay" type="button" tabindex="-1" aria-label="<?= _e(_lang('admin.vox.nav.close')) ?>"></button>
 
-            <div class="cleaner"></div>
-        </div>
-    </main>
+            <div class="vox-main">
+                <main id="page" class="wrapper">
+                    <div id="content"<?php if (!empty($_admin->contentClasses)): ?> class="<?= _e(implode(' ', $_admin->contentClasses)) ?>"<?php endif ?>>
+                        <?= $_admin->output ?>
+                        <div class="cleaner"></div>
+                    </div>
+                </main>
 
-    <footer id="footer" class="wrapper">
-        <hr class="hidden">
-
-        <div id="footer-content">
-            <div id="footer-links">
-                <?php if ($_admin->access): ?>
-                    <a href="<?= _e(Router::index()) ?>" target="_blank"><?= _lang('admin.link.site') ?></a>
-                    <a href="<?= _e(Router::adminIndex()) ?>" target="_blank"><?= _lang('admin.link.newwin') ?></a>
-                <?php else: ?>
-                    <a href="<?= _e(Router::index()) ?>">&lt; <?= _lang('admin.link.home') ?></a>
-                <?php endif ?>
+                <footer id="footer" class="wrapper">
+                    <div id="footer-content">
+                        <div id="footer-links">
+                            <a href="<?= _e(Router::index()) ?>" target="_blank"><?= _lang('admin.link.site') ?></a>
+                            <a href="<?= _e(Router::adminIndex()) ?>" target="_blank"><?= _lang('admin.link.newwin') ?></a>
+                        </div>
+                        <div id="footer-powered-by">
+                            <span><?= _lang('system.poweredby') ?> VoxCMS</span>
+                        </div>
+                    </div>
+                </footer>
             </div>
-
-            <div id="footer-powered-by">
-                <a href="https://sunlight-cms.cz/" target="_blank"><?= _lang('system.poweredby') ?> SunLight CMS</a>
-            </div>
         </div>
-    </footer>
-
+    <?php else: ?>
+        <main id="page" class="wrapper">
+            <div id="content"<?php if (!empty($_admin->contentClasses)): ?> class="<?= _e(implode(' ', $_admin->contentClasses)) ?>"<?php endif ?>>
+                <?= $_admin->output ?>
+                <div class="cleaner"></div>
+            </div>
+        </main>
+        <footer id="footer" class="wrapper">
+            <div id="footer-content">
+                <div id="footer-links"><a href="<?= _e(Router::index()) ?>">&lt; <?= _lang('admin.link.home') ?></a></div>
+                <div id="footer-powered-by"><span><?= _lang('system.poweredby') ?> VoxCMS</span></div>
+            </div>
+        </footer>
+    <?php endif ?>
 </div>
 <?php endif ?>
 

@@ -26,27 +26,132 @@ abstract class Admin
     {
         global $_admin;
 
-        $output = "<nav id=\"menu\">\n";
+        $groups = [
+            'overview' => [],
+            'content' => [],
+            'media' => [],
+            'management' => [],
+            'extensions' => [],
+            'system' => [],
+        ];
 
-        if ($_admin->access) {
-            foreach ($_admin->menu as $module => $order) {
-                if (self::moduleAccess($module)) {
-                    $active = (
-                        $_admin->currentModule === $module
-                        || self::isChildModule($_admin->currentModule, $module)
-                    );
-                    $url = $_admin->modules[$module]['url'] ?? Router::admin($module);
+        $isActive = static function (string $module, bool $includeChildren = true) use ($_admin): bool {
+            return $_admin->currentModule === $module
+                || ($includeChildren && self::isChildModule($_admin->currentModule, $module));
+        };
 
-                    $output .= '<a href="' . $url . '"'
-                        . ($active ? ' class="act"' : '')
-                        . '><span>' . $_admin->modules[$module]['title'] . "</span></a>\n";
-                }
-            }
-        } else {
-            $output .= '<a href="' . _e(Router::adminIndex()) . '" class="act"><span>' . _lang('login.title') . "</span></a>\n";
+        $renderLink = static function (string $module, string $label, string $icon, ?string $url = null, ?bool $active = null): string {
+            global $_admin;
+
+            $url ??= $_admin->modules[$module]['url'] ?? Router::admin($module);
+            $active ??= $_admin->currentModule === $module || self::isChildModule($_admin->currentModule, $module);
+            $icons = [
+                'dashboard' => '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+                'content' => '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
+                'media' => '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 3-4 5 6"/>',
+                'users' => '<path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="7" r="3.5"/><path d="M17 11a3.5 3.5 0 0 0 0-7M17 14.5a4 4 0 0 1 4 4V20"/>',
+                'puzzle' => '<path d="M9 4a2 2 0 1 1 4 0v2h4a2 2 0 0 1 2 2v3h-2a2 2 0 1 0 0 4h2v3a2 2 0 0 1-2 2h-4v-2a2 2 0 1 0-4 0v2H6a2 2 0 0 1-2-2v-4h2a2 2 0 1 0 0-4H4V8a2 2 0 0 1 2-2h3z"/>',
+                'settings' => '<circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 1 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 1 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-.9 3z"/>',
+                'database' => '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3 2 0 3.8-.3 5.2-.9"/>',
+                'activity' => '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+                'more' => '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+            ];
+            $path = $icons[$icon] ?? $icons['puzzle'];
+
+            return '<a class="vox-nav-link' . ($active ? ' is-active' : '') . '" href="' . _e($url) . '" title="' . _e($label) . '"'
+                . ($active ? ' aria-current="page"' : '') . '>'
+                . '<svg class="vox-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' . $path . '</svg>'
+                . '<span class="vox-nav-label">' . _e($label) . '</span></a>';
+        };
+
+        if (!$_admin->access) {
+            return '<nav id="menu" class="vox-sidebar-nav"><a class="vox-nav-link is-active" href="' . _e(Router::adminIndex()) . '"><span>' . _lang('login.title') . '</span></a></nav>';
         }
 
-        $output .= "</nav>\n";
+        $groupByModule = [
+            'index' => 'overview',
+            'content' => 'content',
+            'fman' => 'media',
+            'users' => 'management',
+            'plugins' => 'extensions',
+            'settings' => 'system',
+            'backup' => 'system',
+            'log' => 'system',
+            'other' => 'system',
+        ];
+
+        foreach ($_admin->menu as $module => $order) {
+            if (!self::moduleAccess($module)) {
+                continue;
+            }
+
+            // Articles and categories use existing child/content routes and are presented under one section.
+            if ($module === 'content') {
+                if (isset($_admin->modules['content-articles']) && self::moduleAccess('content-articles')) {
+                    $groups['content'][] = $renderLink('content-articles', _lang('admin.vox.nav.articles'), 'content');
+                }
+
+                $contentLabel = User::hasPrivilege('admincategory')
+                    ? _lang('admin.vox.nav.categories')
+                    : _lang('admin.vox.nav.pages');
+                $isArticleSubmodule = $isActive('content-articles');
+                $isGallerySubmodule = $_admin->currentModule === 'content-editgallery'
+                    || $_admin->currentModule === 'content-manageimgs'
+                    || self::isChildModule($_admin->currentModule, 'content-editgallery')
+                    || self::isChildModule($_admin->currentModule, 'content-manageimgs');
+                $categoriesActive = $isActive('content') && !$isArticleSubmodule && !$isGallerySubmodule;
+                $groups['content'][] = $renderLink('content', $contentLabel, 'content', null, $categoriesActive);
+                continue;
+            }
+
+            $group = $groupByModule[$module] ?? 'extensions';
+            $icon = match ($module) {
+                'index' => 'dashboard',
+                'fman' => 'media',
+                'users' => 'users',
+                'plugins' => 'puzzle',
+                'settings' => 'settings',
+                'backup' => 'database',
+                'log' => 'activity',
+                'other' => 'more',
+                default => 'puzzle',
+            };
+            $groups[$group][] = $renderLink($module, $_admin->modules[$module]['title'], $icon);
+        }
+
+        if (Admin::moduleAccess('content') && User::hasPrivilege('admingallery')) {
+            $galleryActive = $_admin->currentModule === 'content-editgallery'
+                || $_admin->currentModule === 'content-manageimgs'
+                || self::isChildModule($_admin->currentModule, 'content-editgallery')
+                || self::isChildModule($_admin->currentModule, 'content-manageimgs');
+            $groups['media'][] = $renderLink(
+                'content-editgallery',
+                _lang('admin.vox.nav.galleries'),
+                'media',
+                $_admin->modules['content']['url'] ?? Router::admin('content'),
+                $galleryActive
+            );
+        }
+
+        $labels = [
+            'overview' => 'admin.vox.nav.group.overview',
+            'content' => 'admin.vox.nav.group.content',
+            'media' => 'admin.vox.nav.group.media',
+            'management' => 'admin.vox.nav.group.management',
+            'extensions' => 'admin.vox.nav.group.extensions',
+            'system' => 'admin.vox.nav.group.system',
+        ];
+
+        $output = '<nav id="menu" class="vox-sidebar-nav" aria-label="' . _e(_lang('admin.vox.nav.label')) . '">';
+        foreach ($groups as $group => $links) {
+            if ($links === []) {
+                continue;
+            }
+
+            $output .= '<section class="vox-nav-group"><h2 class="vox-nav-heading">' . _e(_lang($labels[$group])) . '</h2>'
+                . implode('', $links) . '</section>';
+        }
+        $output .= '</nav>';
 
         return $output;
     }
@@ -56,40 +161,42 @@ abstract class Admin
      */
     static function userMenu(bool $dark): string
     {
-        $output = '<span id="usermenu">';
-
         if (User::isLoggedIn() && User::hasPrivilege('administration')) {
             $profile_link = Router::module('profile', ['query' => ['id' => User::getUsername()]]);
             $avatar = User::renderAvatar(User::$data, ['get_url' => true, 'default' => false, 'default_dark' => $dark]);
+            $displayName = _e(User::getDisplayName());
+            $output = '<details id="usermenu">'
+                . '<summary aria-label="' . _e(_lang('admin.vox.user.menu')) . '">';
 
             if ($avatar !== null) {
-                $output .= '<a id="usermenu-avatar" href="' . _e($profile_link) . '"><img src="' . $avatar . '" alt="' . User::getUsername() . '"></a>';
+                $output .= '<img id="usermenu-avatar" src="' . _e($avatar) . '" alt="">';
+            } else {
+                $output .= '<span id="usermenu-avatar" class="vox-user-avatar-fallback" aria-hidden="true">'
+                    . '<svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2z"/></svg></span>';
             }
 
-            $output .= '<a id="usermenu-username" href="' . _e($profile_link) . '">' . User::getDisplayName() . '</a> [';
+            $output .= '<span id="usermenu-username">' . $displayName . '</span>'
+                . '<svg class="vox-user-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>'
+                . '</summary><div id="usermenu-dropdown" role="menu">'
+                . '<a role="menuitem" href="' . _e($profile_link) . '">' . _lang('admin.vox.user.profile') . '</a>';
 
             if (Settings::get('messages')) {
                 $messages_count = DB::count('pm', '(receiver=' . User::getId() . ' AND receiver_deleted=0 AND receiver_readtime<update_time) OR (sender=' . User::getId() . ' AND sender_deleted=0 AND sender_readtime<update_time)');
 
+                $messagesLabel = _lang('usermenu.messages');
                 if ($messages_count != 0) {
-                    $messages_count = ' <span class="highlight">(' . _num($messages_count) . ')</span>';
-                } else {
-                    $messages_count = '';
+                    $messagesLabel .= ' (' . _num($messages_count) . ')';
                 }
-
-                $output .= '<a href="' . _e(Router::module('messages')) . '">' . _lang('usermenu.messages') . $messages_count . '</a>, ';
+                $output .= '<a role="menuitem" href="' . _e(Router::module('messages')) . '">' . $messagesLabel . '</a>';
             }
 
-            $output .= '<a href="' . _e(Router::module('settings')) . '">' . _lang('usermenu.settings') . '</a>,'
-                . ' <a href="' . _e(Xsrf::addToUrl(Router::path('system/script/logout.php', ['query' => ['_return' => Router::adminIndex()]]))) . '">' . _lang('usermenu.logout') . '</a>]';
-            $output .= '<a href="' . _e(Core::getBaseUrl()->getPath()) . '/" target="_blank" class="usermenu-web-link" title="' . _lang('admin.link.site') . '">'
-                . '<img class="icon" src="' . _e(Router::path('admin/public/images/icons/guide.png')) . '" alt="' . _lang('admin.link.site') . '">'
-                . '</a>';
+            $output .= '<a role="menuitem" href="' . _e(Router::module('settings')) . '">' . _lang('usermenu.settings') . '</a>'
+                . '<a role="menuitem" href="' . _e(Core::getBaseUrl()->getPath()) . '/" target="_blank">' . _lang('admin.link.site') . '</a>'
+                . '<a role="menuitem" href="' . _e(Xsrf::addToUrl(Router::path('system/script/logout.php', ['query' => ['_return' => Router::adminIndex()]]))) . '">' . _lang('usermenu.logout') . '</a>'
+                . '</div></details>';
         } else {
-            $output .= '<a href="' . _e(Router::adminIndex()) . '">' . _lang('usermenu.guest') . '</a>';
+            $output = '<span id="usermenu"><a href="' . _e(Router::adminIndex()) . '">' . _lang('usermenu.guest') . '</a></span>';
         }
-
-        $output .= '</span>';
 
         return $output;
     }
@@ -672,7 +779,7 @@ abstract class Admin
         return [
             'extend_event' => 'admin.head',
             'css' => [
-                'admin' => Router::path('admin/script/style.php', ['query' => ['s' => 0]]),
+                'admin' => Router::path('admin/script/style.php', ['query' => ['s' => 0, 'voxui' => 11]]),
             ],
             'js' => [
                 'jquery' => Router::path('system/public/jquery.js'),
@@ -685,7 +792,7 @@ abstract class Admin
 
     static function assets(AdminState $admin): array
     {
-        $styleQuery = ['s' => Settings::get('adminscheme')];
+        $styleQuery = ['s' => Settings::get('adminscheme'), 'voxui' => 11];
 
         if ($admin->dark) {
             $styleQuery['d'] = 1;
@@ -701,7 +808,7 @@ abstract class Admin
                 'sunlight' => Router::path('system/public/sunlight.js'),
                 'rangyinputs' => Router::path('system/public/rangyinputs.js'),
                 'jquery_ui' => Router::path('admin/public/jquery-ui.js'),
-                'admin' => Router::path('admin/public/admin.js'),
+                'admin' => Router::path('admin/public/admin.js', ['query' => ['voxui' => 5]]),
             ],
             'js_before' => "\n" . Core::getJavascript([
                 'admin' => [
